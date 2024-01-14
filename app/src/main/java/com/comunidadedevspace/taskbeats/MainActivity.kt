@@ -10,5 +10,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val taskList : RecyclerView = findViewById(R.id.rv_tasks_list)
+
+        val list = listOf<String>("Title 1", "Title 2", "Title 3")
+        val adapter = TaskListAdapter(list)
+
+        taskList.adapter = adapter
     }
 }
