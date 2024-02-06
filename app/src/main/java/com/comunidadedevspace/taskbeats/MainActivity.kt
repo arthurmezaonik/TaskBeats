@@ -9,11 +9,27 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val taskList : RecyclerView = findViewById(R.id.rv_tasks_list)
+        // Kotlin
+        val taskList = listOf<Task>(
+            Task("Title0", "Desc0"),
+            Task("Title1", "Desc1"),
+            Task("Title2", "Desc2"),
+            Task("Title3", "Desc3"),
+            Task("Title4", "Desc4"),
+            Task("Title5", "Desc5"),
+            Task("Title0", "Desc0"),
+            Task("Title1", "Desc1"),
+            Task("Title2", "Desc2"),
+            Task("Title3", "Desc3"),
+            Task("Title4", "Desc4"),
+            Task("Title5", "Desc5")
+        )
 
-        val list = listOf<String>("Title 1", "Title 2", "Title 3")
-        val adapter = TaskListAdapter(list)
+        // Adapter
+        val adapter = TaskListAdapter(taskList)
 
-        taskList.adapter = adapter
+        // RecyclerView
+        val rvTasks : RecyclerView = findViewById(R.id.rv_tasks_list)
+        rvTasks.adapter = adapter
     }
 }
