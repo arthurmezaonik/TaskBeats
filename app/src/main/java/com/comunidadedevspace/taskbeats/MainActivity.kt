@@ -1,5 +1,6 @@
 package com.comunidadedevspace.taskbeats
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
@@ -26,10 +27,18 @@ class MainActivity : AppCompatActivity() {
         )
 
         // Adapter
-        val adapter = TaskListAdapter(taskList)
+        val adapter = TaskListAdapter(taskList, ::openTaskDetailView)
 
         // RecyclerView
         val rvTasks : RecyclerView = findViewById(R.id.rv_tasks_list)
         rvTasks.adapter = adapter
+    }
+
+    private fun openTaskDetailView(task: Task){
+        val intent = Intent(this, TaskDetailActivity::class.java)
+            .apply{
+                putExtra(TaskDetailActivity.TAKS_TITLE_EXTRA, task.title)
+            }
+        startActivity(intent)
     }
 }
