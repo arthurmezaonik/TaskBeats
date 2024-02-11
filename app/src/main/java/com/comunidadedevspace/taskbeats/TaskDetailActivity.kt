@@ -1,22 +1,29 @@
 package com.comunidadedevspace.taskbeats
 
 import android.app.Activity
+import android.content.ClipDescription
 import android.content.Context
 import android.content.Intent
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
+import com.google.android.material.snackbar.Snackbar
 
 class TaskDetailActivity : AppCompatActivity() {
 
-    private lateinit var task: Task
+    private var task: Task? = null
+    private lateinit var btnDone : Button
     companion object{
         private const val TASK_DETAIL_EXTRA = "task.extra.detail"
 
-        fun start(context: Context, task: Task): Intent{
+        fun start(context: Context, task: Task?): Intent{
             val intent = Intent(context, TaskDetailActivity::class.java).apply {
                 putExtra(TASK_DETAIL_EXTRA, task)
             }
@@ -30,13 +37,32 @@ class TaskDetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_task_detail)
 
         // recuperar a task
-        task = intent.getSerializableExtra(TASK_DETAIL_EXTRA) as Task
+        task = intent.getSerializableExtra(TASK_DETAIL_EXTRA) as Task?
 
-        // recuperar campo do XML
-        val tvTitle = findViewById<TextView>(R.id.tv_task_title_detail)
+        val edtTitle = findViewById<EditText>(R.id.edt_task_title)
+        val edtDescription = findViewById<EditText>(R.id.edt_task_description)
+        btnDone = findViewById(R.id.btn_done)
 
-        // setar um novo texto na tela
-        tvTitle.text = task.title
+        if(task != null){
+            edtTitle.setText(task!!.title)
+            edtDescription.setText(task!!.description)
+        }
+
+        btnDone.setOnClickListener{
+            val title = edtTitle.text.toString()
+            val desc = edtDescription.text.toString()
+
+            if(title.isNotEmpty() && desc.isNotEmpty()){
+                addNewTask(title, desc)
+            } else{
+                showMessage(it, "All fields are required")
+            }
+        }
+    }
+
+    private fun addNewTask(title: String, description: String){
+        val newTask = Task(0, title, description)
+        returnAction(newTask, ActionType.CREATE)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -48,16 +74,31 @@ class TaskDetailActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.delete_task -> {
-                val intent = Intent().apply {
-                    val actionType = ActionType.DELETE
-                    val taskAction = TaskAction(task, actionType)
-                    putExtra(TASK_ACTION_RESULT, taskAction)
+
+                if(task != null){
+                    returnAction(task!!, ActionType.DELETE)
+                } else {
+                    showMessage(btnDone, "Item not found")
                 }
-                setResult(Activity.RESULT_OK, intent)
-                finish()
+
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun returnAction(task: Task, actionType: ActionType){
+        val intent = Intent().apply {
+            val taskAction = TaskAction(task, actionType.name)
+            putExtra(TASK_ACTION_RESULT, taskAction)
+        }
+        setResult(Activity.RESULT_OK, intent)
+        finish()
+    }
+
+    private fun showMessage(view: View, message: String){
+        Snackbar.make(view, message, Snackbar.LENGTH_LONG)
+            .setAction("Action", null)
+            .show()
     }
 }
