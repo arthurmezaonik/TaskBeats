@@ -4,12 +4,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ListAdapter
 
 class TaskListAdapter(
-    private val listTask : List<Task>,
     private val openTaskDetailView:(task: Task) -> Unit
-) : RecyclerView.Adapter<TaskListViewHolder>(){
+) : ListAdapter<Task, TaskListViewHolder>(TaskListAdapter) {
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskListViewHolder {
         val view: View = LayoutInflater
@@ -18,13 +20,21 @@ class TaskListAdapter(
         return TaskListViewHolder(view)
     }
 
-    override fun getItemCount(): Int {
-        return listTask.size
+    override fun onBindViewHolder(holder: TaskListViewHolder, position: Int) {
+        val task = getItem(position)
+        holder.bind(task, openTaskDetailView)
     }
 
-    override fun onBindViewHolder(holder: TaskListViewHolder, position: Int) {
-        val task = listTask[position]
-        holder.bind(task, openTaskDetailView)
+    companion object: DiffUtil.ItemCallback<Task>() {
+        override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean {
+            return oldItem == newItem
+        }
+
+        override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean {
+            return oldItem.title == newItem.title &&
+                    oldItem.description == newItem.description
+        }
+
     }
 }
 
