@@ -1,5 +1,13 @@
 package com.comunidadedevspace.taskbeats
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.io.Serializable
 
-data class Task(val id: Int, val title: String, val description: String): Serializable
+@Entity
+data class Task(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val title: String,
+    val description: String
+): Serializable

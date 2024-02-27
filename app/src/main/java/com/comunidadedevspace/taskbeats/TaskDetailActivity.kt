@@ -1,10 +1,8 @@
 package com.comunidadedevspace.taskbeats
 
 import android.app.Activity
-import android.content.ClipDescription
 import android.content.Context
 import android.content.Intent
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -13,7 +11,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import com.google.android.material.snackbar.Snackbar
 
 class TaskDetailActivity : AppCompatActivity() {
@@ -35,6 +32,7 @@ class TaskDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_task_detail)
+        setSupportActionBar(findViewById(R.id.toolbar))
 
         // recuperar a task
         task = intent.getSerializableExtra(TASK_DETAIL_EXTRA) as Task?
@@ -53,16 +51,21 @@ class TaskDetailActivity : AppCompatActivity() {
             val desc = edtDescription.text.toString()
 
             if(title.isNotEmpty() && desc.isNotEmpty()){
-                addNewTask(title, desc)
+                if(task == null){
+                    addOrUpdateTask(0,title, desc, ActionType.CREATE)
+                } else{
+                    addOrUpdateTask(task!!.id, title, desc, ActionType.UPDATE)
+                }
             } else{
                 showMessage(it, "All fields are required")
             }
         }
     }
 
-    private fun addNewTask(title: String, description: String){
-        val newTask = Task(0, title, description)
-        returnAction(newTask, ActionType.CREATE)
+    private fun addOrUpdateTask(id: Int, title: String, description: String, actionType: ActionType){
+
+        val task = Task(id, title, description)
+        returnAction(task, actionType)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
