@@ -1,4 +1,4 @@
-package com.comunidadedevspace.taskbeats
+package com.comunidadedevspace.taskbeats.presentation
 
 import android.app.Activity
 import androidx.appcompat.app.AppCompatActivity
@@ -12,10 +12,12 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
+import com.comunidadedevspace.taskbeats.R
+import com.comunidadedevspace.taskbeats.data.AppDataBase
+import com.comunidadedevspace.taskbeats.data.Task
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import java.io.Serializable
 
@@ -73,21 +75,21 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun insertIntoDataBase(task:Task){
+    private fun insertIntoDataBase(task: Task){
         CoroutineScope(IO).launch {
             dao.insert(task)
             listFromDataBase()
         }
     }
 
-    private fun updateIntoDataBase(task:Task){
+    private fun updateIntoDataBase(task: Task){
         CoroutineScope(IO).launch {
             dao.update(task)
             listFromDataBase()
         }
     }
 
-    private fun deleteFromDataBase(task:Task){
+    private fun deleteFromDataBase(task: Task){
         CoroutineScope(IO).launch {
             dao.delete(task)
             listFromDataBase()
@@ -118,7 +120,7 @@ class MainActivity : AppCompatActivity() {
         openTaskListDetail(task)
     }
 
-    private fun openTaskListDetail(task:Task? = null){
+    private fun openTaskListDetail(task: Task? = null){
         val intent = TaskDetailActivity.start(this, task)
         startForResult.launch(intent)
     }
@@ -147,7 +149,7 @@ enum class ActionType{
 }
 
 data class TaskAction(
-    val task:Task,
+    val task: Task,
     val actionType: String
 ): Serializable
 
